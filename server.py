@@ -8,33 +8,35 @@ def sent_analyzer():
     # Retrieve the text to analyze from the request arguments
     text_to_analyze = request.args.get('textToAnalyze')
 
-    # Pass the text to the emotion_detector function
+    # Get the emotion analysis result from your function
     response = emotion_detector(text_to_analyze)
-    # Extract the dominate emotion and emotion scores
-    emotions = formatted_response["emotionPredictions"][0]["emotion"]
-    anger_score = emotions["anger"]
-    disgust_score = emotions["disgust"]
-    fear_score = emotions["fear"]
-    joy_score = emotions["joy"]
-    sadness_score = emotions["sadness"]
 
-    # Find dominant emotion
-    dominant_emotion = max(emotions, key=emotions.get)
+    # Extract the scores and dominant emotion
+    anger_score = response['anger']
+    disgust_score = response['disgust']
+    fear_score = response['fear']
+    joy_score = response['joy']
+    sadness_score = response['sadness']
+    dominant_emotion = response['dominant_emotion']
 
-    # Extract the dominate emotion and score from the response
+    # Format the result string for display
     result = (
-        "For the given statement, the system response is" 
-        f"'anger': {anger_score}, 'disgust': {disgust_score}," 
-        f"'fear': {fear_score}, 'joy': {joy_score} and" 
-        f"'sadness': {sadness_score}. The dominant emotion is "
-        f"{dominant_emotion}."
+        f"For the given statement, the system response is: "
+        f"anger: {anger_score}, disgust: {disgust_score}, fear: {fear_score}, "
+        f"joy: {joy_score}, sadness: {sadness_score}. "
+        f"The dominant emotion is {dominant_emotion}."
     )
-    # Return a formatted string with the desired output
+
+    # Return the result text
     return result
+
 
 @app.route("/")
 def render_index_page():
     return render_template('index.html')
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
     app.run(host="0.0.0.0", port=5000)
